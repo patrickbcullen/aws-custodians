@@ -23,7 +23,7 @@ def cli():
 @click.option('--region', default=AWS_REGION, help='AWS region.')
 @click.option('--dryrun/--no-dryrun', default=False, help='Dry run what action would be taken instead of actually taking them.')
 @click.option('--max-days', default=30, help='Keep unused images for this many days.')
-@click.option('--name-filter', help='Only evaluate images that have this substring in the name.')
+@click.option('--name-filter', multiple=True, help='Only evaluate images that have this substring in the name.')
 def image(dryrun, region, max_days, name_filter):
     aws = AWS()
     custodian = ImageCustodian(aws)
