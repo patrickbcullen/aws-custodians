@@ -7,7 +7,7 @@ class ImageCustodian(object):
         self.aws = aws
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    def cleanup(self, dryrun, region, max_days):
+    def cleanup(self, dryrun, region, max_days, name_filter=None):
         try:
             self.logger.info("Max retention of unsued images %dd" % max_days)
             in_use_images = self.in_use_images(region)
@@ -18,6 +18,10 @@ class ImageCustodian(object):
                 days_old = age_in_days(create_time)
                 image_id = image['ImageId']
                 name = image['Name']
+
+                if name_filter and name and name_filter not in name:
+                    self.logger.info("Skipping image because name filter %s is not a substring of %s %s %s" % (name_filter, name, image_id, tag_info))
+                    continue
 
                 if days_old >= max_days:
                     self.cleanup_unused_image(dryrun, region, in_use_images, image_id, days_old, name, tag_info)
